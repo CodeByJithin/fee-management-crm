@@ -8,7 +8,7 @@ let allClassesCache = [];
 
 (async function init() {
   await requireAuth();
-  const content = renderLayout("students", "Student Management");
+  const content = renderLayout("students", "Students");
   content.innerHTML = studentsSkeleton();
   studentPaginator = new Paginator({ pageSize: 10, onChange: loadStudents });
   await loadClassOptions();

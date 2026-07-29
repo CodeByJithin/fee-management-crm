@@ -7,7 +7,7 @@ let classFilters = { search: "", status: "all" };
 
 (async function init() {
   await requireAuth();
-  const content = renderLayout("classes", "Class Management");
+  const content = renderLayout("classes", "Classes");
   content.innerHTML = classesSkeleton();
   classPaginator = new Paginator({ pageSize: 10, onChange: loadClasses });
   wireClassToolbar();
