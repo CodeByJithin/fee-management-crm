@@ -10,6 +10,14 @@ const NAV_ITEMS = [
   { href: "reports.html", key: "reports", icon: "report-icon", label: "Reports" },
 ];
 
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .then(() => console.log("Service Worker registered"))
+      .catch(err => console.error("Service Worker registration failed:", err));
+  });
+}
+
 function renderLayout(activeKey, pageTitle) {
   const root = document.getElementById("app-shell");
   if (!root) return;
