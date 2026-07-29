@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login · LedgerSchool Fees</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-brand">
+      <span class="login-brand__mark">FM</span>
+      <span class="login-brand__text">Ledger<em>School</em></span>
+    </div>
+
+    <h2>Admin sign in</h2>
+    <p class="subtitle">Sign in to manage classes, students and fee records.</p>
+
+    <div class="login-error" id="loginError"></div>
+
+    <form id="loginForm" novalidate>
+      <div class="field" id="emailField">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" autocomplete="username" placeholder="admin@yourschool.edu" required>
+        <div class="field__err">Enter a valid email address.</div>
+      </div>
+      <div class="field" id="passwordField">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" placeholder="••••••••" required>
+        <div class="field__err">Password is required.</div>
+      </div>
+      <button type="submit" class="btn btn--primary btn--block" id="loginBtn">Sign in</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/supabaseClient.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  redirectIfAuthenticated();
+
+  const form = document.getElementById("loginForm");
+  const errorBox = document.getElementById("loginError");
+  const loginBtn = document.getElementById("loginBtn");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBox.classList.remove("login-error--show");
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    let valid = true;
+    document.getElementById("emailField").classList.toggle("field--error", !email);
+    document.getElementById("passwordField").classList.toggle("field--error", !password);
+    if (!email || !password) valid = false;
+    if (!valid) return;
+
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Signing in…";
+    try {
+      await loginAdmin(email, password);
+      window.location.href = "dashboard.html";
+    } catch (err) {
+      errorBox.textContent = getFriendlyError(err);
+      errorBox.classList.add("login-error--show");
+      loginBtn.disabled = false;
+      loginBtn.textContent = "Sign in";
+    }
+  });
+</script>
+</body>
+</html>
