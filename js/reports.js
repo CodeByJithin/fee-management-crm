@@ -84,8 +84,11 @@ function reportsSkeleton() {
   `;
 }
 
+
 function wireReportCards() {
-  const years = academicYearOptionsList();
+  const [startY] = CURRENT_ACADEMIC_YEAR.split("-").map(Number);
+  const years = [];
+  for (let i = -2; i <= 1; i++) years.push(`${startY + i}-${startY + i + 1}`);
   ["reportYearSelectClass", "reportYearSelectMonthly", "reportYearSelectPending"].forEach((id) => {
     const sel = document.getElementById(id);
     sel.innerHTML = years.map((y) => `<option value="${y}" ${y === CURRENT_ACADEMIC_YEAR ? "selected" : ""}>${y}</option>`).join("");
