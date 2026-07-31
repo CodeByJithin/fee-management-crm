@@ -33,8 +33,8 @@ function renderLayout(activeKey, pageTitle) {
     <div class="shell">
       <aside class="sidebar" id="sidebar">
         <div class="sidebar__brand">
-          <span class="sidebar__mark">FM</span>
-          <span class="sidebar__name">Ledger<em>School</em></span>
+          <span class="sidebar__mark">FP</span>
+          <span class="sidebar__name">Fee<em>Pulse</em></span>
         </div>
         <nav class="sidebar__nav">${navHtml}</nav>
         <button class="sidebar__logout" data-logout>
