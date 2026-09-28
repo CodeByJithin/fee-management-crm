@@ -191,27 +191,118 @@ async function deleteFeeRecord(f) {
   }
 }
 
+
+function followUpFee(f) {
+  if (!f) return;
+
+  const studentName = f.students?.student_name || "your child";
+  const parentName = f.students?.parent_name || "Parent";
+  const parentPhone = f.students?.parent_phone || "";
+
+  const message = `Hi ${parentName},
+
+This is Anjel from Eduvoia.
+
+This is a gentle reminder that the payment for ${studentName} for ${f.month || "this month"} is currently pending.
+
+Fee Amount: ${formatCurrency(f.fee_amount)}
+Balance Due: ${formatCurrency(f.balance_amount)}
+
+Kindly request you to clear the outstanding amount at the earliest.
+
+Thank you for your prompt attention.
+
+Thanks,
+Team Eduvoia`;
+
+  // Remove spaces and special characters from phone number
+  const phone = parentPhone.replace(/\D/g, "");
+
+  // Open WhatsApp with pre-filled message
+  const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+  window.open(whatsappUrl, "_blank");
+}
+
+
 function viewFeeDetails(f) {
   if (!f) return;
+
   openModal(`
-    <h3 class="modal__title">${escapeHtml(f.students?.student_name || "Fee Record")}</h3>
-    <p class="modal__message">${escapeHtml(f.month || "Yearly")} · ${escapeHtml(f.academic_year)}</p>
+    <h3 class="modal__title">
+      ${escapeHtml(f.students?.student_name || "Fee Record")}
+    </h3>
+
+    <p class="modal__message">
+      ${escapeHtml(f.month || "Yearly")} · 
+      ${escapeHtml(f.academic_year)}
+    </p>
+
     <div class="modal__grid" style="row-gap:14px;">
-      <div><div class="text-muted" style="font-size:12px;">Fee Type</div><div>${escapeHtml(f.fee_type)}</div></div>
-      <div><div class="text-muted" style="font-size:12px;">Status</div><div>${statusBadge(f.payment_status)}</div></div>
-      <div><div class="text-muted" style="font-size:12px;">Fee Amount</div><div class="tabular">${formatCurrency(f.fee_amount)}</div></div>
-      <div><div class="text-muted" style="font-size:12px;">Discount</div><div class="tabular">${formatCurrency(f.discount_amount)}</div></div>
-      <div><div class="text-muted" style="font-size:12px;">Amount Paid</div><div class="tabular">${formatCurrency(f.amount_paid)}</div></div>
-      <div><div class="text-muted" style="font-size:12px;">Balance</div><div class="tabular">${formatCurrency(f.balance_amount)}</div></div>
-      <div><div class="text-muted" style="font-size:12px;">Paid Date</div><div>${formatDate(f.paid_date)}</div></div>
-      <div><div class="text-muted" style="font-size:12px;">Payment Method</div><div>${escapeHtml(f.payment_method || "—")}</div></div>
-      <div class="field--full"><div class="text-muted" style="font-size:12px;">Remarks</div><div>${escapeHtml(f.remarks || "—")}</div></div>
+      <div>
+        <div class="text-muted" style="font-size:12px;">Fee Type</div>
+        <div>${escapeHtml(f.fee_type)}</div>
+      </div>
+
+      <div>
+        <div class="text-muted" style="font-size:12px;">Status</div>
+        <div>${statusBadge(f.payment_status)}</div>
+      </div>
+
+      <div>
+        <div class="text-muted" style="font-size:12px;">Fee Amount</div>
+        <div class="tabular">${formatCurrency(f.fee_amount)}</div>
+      </div>
+
+      <div>
+        <div class="text-muted" style="font-size:12px;">Discount</div>
+        <div class="tabular">${formatCurrency(f.discount_amount)}</div>
+      </div>
+
+      <div>
+        <div class="text-muted" style="font-size:12px;">Amount Paid</div>
+        <div class="tabular">${formatCurrency(f.amount_paid)}</div>
+      </div>
+
+      <div>
+        <div class="text-muted" style="font-size:12px;">Balance</div>
+        <div class="tabular">${formatCurrency(f.balance_amount)}</div>
+      </div>
+
+      <div>
+        <div class="text-muted" style="font-size:12px;">Paid Date</div>
+        <div>${formatDate(f.paid_date)}</div>
+      </div>
+
+      <div>
+        <div class="text-muted" style="font-size:12px;">Payment Method</div>
+        <div>${escapeHtml(f.payment_method || "—")}</div>
+      </div>
+
+      <div class="field--full">
+        <div class="text-muted" style="font-size:12px;">Remarks</div>
+        <div>${escapeHtml(f.remarks || "—")}</div>
+      </div>
     </div>
+
     <div class="modal__actions">
-      <button type="button" class="btn btn--ghost" data-close-modal>Close</button>
+      <button 
+        type="button" 
+        class="btn btn--ghost"
+        onclick='followUpFee(${JSON.stringify(f).replace(/'/g, "&#39;")})'>
+        Follow Up
+      </button>
+
+      <button 
+        type="button" 
+        class="btn btn--ghost" 
+        data-close-modal>
+        Close
+      </button>
     </div>
   `);
 }
+
 
 function openPaymentForm(f) {
   if (!f) return;
