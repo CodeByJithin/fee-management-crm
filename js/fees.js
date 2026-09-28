@@ -116,7 +116,7 @@ async function loadFees() {
   try {
     let query = sb
       .from("fee_records")
-      .select("*, students!inner(student_name, student_id, active, class_id, classes(class_name))", { count: "exact" })
+      .select("*, students!inner(student_name, student_id, parent_name, parent_phone, active, class_id, classes(class_name))", { count: "exact" })
       .eq("academic_year", feeFilters.academicYear);
 
     if (feeFilters.classId !== "all") query = query.eq("students.class_id", feeFilters.classId);
@@ -198,7 +198,6 @@ function followUpFee(f) {
   const studentName = f.students?.student_name || "your child";
   const parentName = f.students?.parent_name || "Parent";
   const parentPhone = f.students?.parent_phone || "";
-
   const message = `Hi ${parentName},
 
 This is Anjel from Eduvoia.
@@ -217,6 +216,7 @@ Team Eduvoia`;
 
   // Remove spaces and special characters from phone number
   const phone = parentPhone.replace(/\D/g, "");
+
 
   // Open WhatsApp with pre-filled message
   const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
