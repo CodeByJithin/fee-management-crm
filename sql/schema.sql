@@ -62,6 +62,7 @@ create table if not exists fee_records (
   paid_date date,
   payment_method text,
   remarks text,
+  last_follow_up_date date,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -79,9 +80,13 @@ create unique index if not exists uq_fee_yearly
 -- database created before the Discount Amount feature existed.
 alter table fee_records add column if not exists discount_amount numeric(10,2) not null default 0;
 
+-- Migration safety net: adds last_follow_up_date to record follow-up date
+alter table fee_records add column if not exists last_follow_up_date date;
+
 create index if not exists idx_fee_student on fee_records(student_id);
 create index if not exists idx_fee_status on fee_records(payment_status);
 create index if not exists idx_fee_year_month on fee_records(academic_year, month);
+create index if not exists idx_fee_last_follow_up on fee_records(last_follow_up_date);
 
 -- ----------------------------------------------------------------------------
 -- 4. AUTO-CALCULATION TRIGGER (balance + payment status + timestamps)

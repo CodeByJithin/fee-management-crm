@@ -70,6 +70,21 @@ function statusBadge(status) {
   return `<span class="badge ${cls}">${escapeHtml(status)}</span>`;
 }
 
+function followUpStatusBadge(lastFollowUpDate) {
+  if (!lastFollowUpDate) {
+    return `<span class="badge badge--inactive">No follow-up yet</span>`;
+  }
+  const days = daysSince(lastFollowUpDate);
+  let cls = "badge--paid"; // Green for 0-3 days
+  if (days > 7) {
+    cls = "badge--pending"; // Red for > 7 days
+  } else if (days >= 4) {
+    cls = "badge--partial"; // Yellow for 4-7 days
+  }
+  const label = days === 0 ? "Today" : `${days} day${days === 1 ? "" : "s"} ago`;
+  return `<span class="badge ${cls}" title="Followed up ${days} day${days === 1 ? "" : "s"} ago (${formatDate(lastFollowUpDate)})">${escapeHtml(label)}</span>`;
+}
+
 /* -------------------------------- Debounce -------------------------------- */
 function debounce(fn, wait = 300) {
   let t;

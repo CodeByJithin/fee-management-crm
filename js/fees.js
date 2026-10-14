@@ -225,10 +225,68 @@ Team Eduvoia`;
 }
 
 
+async function saveFollowUpFee(feeId, btnEl) {
+  if (!feeId) return;
+  const originalText = btnEl ? btnEl.textContent : "Save Follow-Up";
+  if (btnEl) {
+    btnEl.disabled = true;
+    btnEl.textContent = "Saving…";
+  }
+
+  // Use local date formatted as YYYY-MM-DD for SQL DATE field
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  const localDateStr = `${year}-${month}-${day}`;
+
+  try {
+    const { error } = await sb
+      .from("fee_records")
+      .update({ last_follow_up_date: localDateStr })
+      .eq("id", feeId);
+
+    if (error) throw error;
+    toast("Follow-up date recorded successfully.");
+
+    // Update in-memory record in _lastFeeRows if present
+    const record = _lastFeeRows.find((r) => r.id === feeId);
+    if (record) {
+      record.last_follow_up_date = localDateStr;
+    }
+
+    // Update the Details modal view if open
+    const modalDateVal = document.getElementById(`detailFollowUpDate-${feeId}`);
+    if (modalDateVal) {
+      modalDateVal.textContent = formatDate(localDateStr);
+    }
+    const modalBadgeVal = document.getElementById(`detailFollowUpBadge-${feeId}`);
+    if (modalBadgeVal) {
+      modalBadgeVal.innerHTML = followUpStatusBadge(localDateStr);
+    }
+
+    if (btnEl) {
+      btnEl.disabled = false;
+      btnEl.textContent = "Saved ✓";
+      setTimeout(() => {
+        if (btnEl) btnEl.textContent = "Save Follow-Up";
+      }, 2000);
+    }
+
+    await loadFees();
+  } catch (err) {
+    toast(getFriendlyError(err), "error");
+    if (btnEl) {
+      btnEl.disabled = false;
+      btnEl.textContent = originalText;
+    }
+  }
+}
+
 function viewFeeDetails(f) {
   if (!f) return;
 
-  openModal(`
+  const overlay = openModal(`
     <h3 class="modal__title">
       ${escapeHtml(f.students?.student_name || "Fee Record")}
     </h3>
@@ -279,6 +337,16 @@ function viewFeeDetails(f) {
         <div>${escapeHtml(f.payment_method || "—")}</div>
       </div>
 
+      <div>
+        <div class="text-muted" style="font-size:12px;">Last Follow-Up Date</div>
+        <div id="detailFollowUpDate-${f.id}">${formatDate(f.last_follow_up_date)}</div>
+      </div>
+
+      <div>
+        <div class="text-muted" style="font-size:12px;">Follow-Up Before</div>
+        <div id="detailFollowUpBadge-${f.id}">${followUpStatusBadge(f.last_follow_up_date)}</div>
+      </div>
+
       <div class="field--full">
         <div class="text-muted" style="font-size:12px;">Remarks</div>
         <div>${escapeHtml(f.remarks || "—")}</div>
@@ -288,8 +356,15 @@ function viewFeeDetails(f) {
     <div class="modal__actions">
       <button 
         type="button" 
+        class="btn btn--primary"
+        id="saveFollowUpBtn-${f.id}">
+        Save Follow-Up
+      </button>
+
+      <button 
+        type="button" 
         class="btn btn--ghost"
-        onclick='followUpFee(${JSON.stringify(f).replace(/'/g, "&#39;")})'>
+        id="followUpBtn-${f.id}">
         Follow Up
       </button>
 
@@ -301,6 +376,12 @@ function viewFeeDetails(f) {
       </button>
     </div>
   `);
+
+  const saveBtn = overlay.querySelector(`#saveFollowUpBtn-${f.id}`);
+  const followUpBtn = overlay.querySelector(`#followUpBtn-${f.id}`);
+
+  saveBtn?.addEventListener("click", () => saveFollowUpFee(f.id, saveBtn));
+  followUpBtn?.addEventListener("click", () => followUpFee(f));
 }
 
 
@@ -521,5 +602,6 @@ function exportCurrentFeesCsv() {
     { label: "Balance", value: (r) => Number(r.balance_amount).toFixed(2) },
     { label: "Status", value: "payment_status" },
     { label: "Paid Date", value: (r) => formatDate(r.paid_date) },
+    { label: "Last Follow-Up Date", value: (r) => formatDate(r.last_follow_up_date) },
   ], _lastFeeRows);
 }
