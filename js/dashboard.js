@@ -248,12 +248,12 @@ function paintDueRows(rows) {
     .map(
       (f) => `
     <tr>
-      <td>${escapeHtml(f.students?.student_name || "—")} <span class="text-muted">(${escapeHtml(f.students?.student_id || "")})</span></td>
-      <td>${escapeHtml(f.students?.classes?.class_name || "—")}</td>
-      <td>${escapeHtml(f.month || "Yearly")}</td>
-      <td>${escapeHtml(f.fee_type)}</td>
-      <td class="num tabular">${formatCurrency(f.balance_amount)}</td>
-      <td>${formatDate(f.created_at)}</td>
+      <td data-label="Student">${escapeHtml(f.students?.student_name || "—")} <span class="text-muted">(${escapeHtml(f.students?.student_id || "")})</span></td>
+      <td data-label="Class">${escapeHtml(f.students?.classes?.class_name || "—")}</td>
+      <td data-label="Fee Month">${escapeHtml(f.month || "Yearly")}</td>
+      <td data-label="Fee Type">${escapeHtml(f.fee_type)}</td>
+      <td class="num tabular" data-label="Amount Due">${formatCurrency(f.balance_amount)}</td>
+      <td data-label="Due Since">${formatDate(f.created_at)}</td>
     </tr>`
     )
     .join("");
@@ -277,11 +277,11 @@ function renderOverdueReport(fees) {
     .map(
       (f) => `
     <tr>
-      <td>${escapeHtml(f.students?.student_name || "—")}</td>
-      <td>${escapeHtml(f.students?.classes?.class_name || "—")}</td>
-      <td>${escapeHtml(f.month)}</td>
-      <td class="num tabular">${formatCurrency(f.balance_amount)}</td>
-      <td>${daysSince(f.created_at)} days</td>
+      <td data-label="Student">${escapeHtml(f.students?.student_name || "—")}</td>
+      <td data-label="Class">${escapeHtml(f.students?.classes?.class_name || "—")}</td>
+      <td data-label="Month">${escapeHtml(f.month)}</td>
+      <td class="num tabular" data-label="Amount Due">${formatCurrency(f.balance_amount)}</td>
+      <td data-label="Days Overdue">${daysSince(f.created_at)} days</td>
     </tr>`
     )
     .join("");

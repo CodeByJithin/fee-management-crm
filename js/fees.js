@@ -149,16 +149,16 @@ function paintFees(rows) {
     .map(
       (f) => `
     <tr>
-      <td>${escapeHtml(f.students?.student_name || "—")} <span class="text-muted">(${escapeHtml(f.students?.student_id || "")})</span></td>
-      <td>${escapeHtml(f.students?.classes?.class_name || "—")}</td>
-      <td>${escapeHtml(f.month || "Yearly")}</td>
-      <td>${escapeHtml(f.fee_type)}</td>
-      <td class="num tabular">${formatCurrency(f.fee_amount)}</td>
-      <td class="num tabular">${formatCurrency(f.discount_amount)}</td>
-      <td class="num tabular">${formatCurrency(f.amount_paid)}</td>
-      <td class="num tabular">${formatCurrency(f.balance_amount)}</td>
-      <td>${statusBadge(f.payment_status)}</td>
-      <td class="row-actions">
+      <td data-label="Student">${escapeHtml(f.students?.student_name || "—")} <span class="text-muted">(${escapeHtml(f.students?.student_id || "")})</span></td>
+      <td data-label="Class">${escapeHtml(f.students?.classes?.class_name || "—")}</td>
+      <td data-label="Period">${escapeHtml(f.month || "Yearly")}</td>
+      <td data-label="Fee Type">${escapeHtml(f.fee_type)}</td>
+      <td class="num tabular" data-label="Fee Amount">${formatCurrency(f.fee_amount)}</td>
+      <td class="num tabular" data-label="Discount">${formatCurrency(f.discount_amount)}</td>
+      <td class="num tabular" data-label="Paid">${formatCurrency(f.amount_paid)}</td>
+      <td class="num tabular" data-label="Balance">${formatCurrency(f.balance_amount)}</td>
+      <td data-label="Status">${statusBadge(f.payment_status)}</td>
+      <td class="row-actions" data-label="Actions">
         <button class="btn btn--ghost btn--sm" data-view="${f.id}">Details</button>
         <button class="btn btn--primary btn--sm" data-pay="${f.id}" ${f.payment_status === "Paid" ? "disabled" : ""}>Record Payment</button>
         <button class="btn btn--danger btn--sm" data-delete="${f.id}">Delete</button>

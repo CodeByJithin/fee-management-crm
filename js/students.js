@@ -108,13 +108,13 @@ function paintStudents(rows) {
     .map(
       (s) => `
     <tr>
-      <td>${escapeHtml(s.student_id)}</td>
-      <td>${escapeHtml(s.student_name)}</td>
-      <td>${escapeHtml(s.classes?.class_name || "—")}</td>
-      <td>${escapeHtml(s.parent_name)}</td>
-      <td>${escapeHtml(s.parent_phone || "—")}</td>
-      <td><span class="badge ${s.active ? "badge--active" : "badge--inactive"}">${s.active ? "Active" : "Inactive"}</span></td>
-      <td class="row-actions">
+      <td data-label="Student ID">${escapeHtml(s.student_id)}</td>
+      <td data-label="Name">${escapeHtml(s.student_name)}</td>
+      <td data-label="Class">${escapeHtml(s.classes?.class_name || "—")}</td>
+      <td data-label="Parent">${escapeHtml(s.parent_name)}</td>
+      <td data-label="Parent Phone">${escapeHtml(s.parent_phone || "—")}</td>
+      <td data-label="Status"><span class="badge ${s.active ? "badge--active" : "badge--inactive"}">${s.active ? "Active" : "Inactive"}</span></td>
+      <td class="row-actions" data-label="Actions">
         <button class="btn btn--ghost btn--sm" data-view="${s.id}">View</button>
         <button class="btn btn--ghost btn--sm" data-edit="${s.id}">Edit</button>
         ${s.active ? `<button class="btn btn--danger btn--sm" data-deactivate="${s.id}">Deactivate</button>` : ""}

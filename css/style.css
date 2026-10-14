@@ -561,13 +561,14 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
 /* Mobile & Touchscreen Optimization */
 @media (max-width: 640px) {
   .toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-    margin-bottom: 14px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
   }
   .toolbar > * {
     width: 100%;
+    margin: 0;
   }
   .toolbar .toolbar__spacer {
     display: none;
@@ -576,13 +577,31 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
     min-width: 0;
     width: 100%;
   }
+  .toolbar .search-input input {
+    height: 40px;
+    font-size: 14px;
+  }
   .toolbar select.filter-select {
     width: 100%;
-    height: 42px;
+    height: 38px;
+    font-size: 13.5px;
+    padding: 6px 10px;
+    background-color: var(--surface);
   }
   .toolbar .btn {
     width: 100%;
-    min-height: 42px;
+    min-height: 40px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* Two-column filter rows on mobile where space allows */
+  .toolbar:has(select.filter-select + select.filter-select) {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+  .toolbar:has(select.filter-select + select.filter-select) > .search-input,
+  .toolbar:has(select.filter-select + select.filter-select) > .btn {
+    grid-column: 1 / -1;
   }
 
   .stat-grid {
@@ -609,27 +628,115 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
     font-size: 11.5px;
   }
 
+  /* Transform table into responsive mobile cards — no horizontal scroll needed! */
   .table-wrap {
-    margin: 0 -14px;
+    margin: 0;
+    border: none;
     border-radius: 0;
-    border-left: none;
-    border-right: none;
-    -webkit-overflow-scrolling: touch;
+    background: transparent;
+    overflow: visible;
   }
   table.data-table {
-    font-size: 13px;
+    display: block;
+    min-width: 0 !important;
+    width: 100%;
+    border: none;
+    background: transparent;
   }
-  .data-table thead th, .data-table tbody td {
-    padding: 10px 12px;
+  .data-table thead {
+    display: none; /* Hide desktop table headers on mobile */
   }
-  .data-table .row-actions {
-    flex-wrap: wrap;
-    gap: 4px;
-    justify-content: flex-start;
+  .data-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
-  .data-table .row-actions .btn--sm {
-    padding: 6px 10px;
+  .data-table tbody tr {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+  }
+  .data-table tbody tr:hover {
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+  }
+  .data-table tbody tr.row-empty,
+  .data-table tbody tr.row-loading {
+    display: block;
+    text-align: center;
+    border: 1px dashed var(--border-strong);
+    background: var(--surface);
+    border-radius: var(--radius);
+  }
+  .data-table tbody tr.row-empty td,
+  .data-table tbody tr.row-loading td {
+    display: block;
+    border: none;
+    padding: 30px 14px;
+  }
+  .data-table tbody td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+    color: var(--ink);
+    text-align: right;
+  }
+  .data-table tbody td:last-child {
+    border-bottom: none;
+  }
+  .data-table tbody td[data-label]::before {
+    content: attr(data-label);
     font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    text-align: left;
+    padding-right: 12px;
+    flex-shrink: 0;
+  }
+  /* Primary title styling for first data row (Name or Student) */
+  .data-table tbody tr > td:first-child {
+    padding-top: 0;
+    padding-bottom: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table tbody tr > td:first-child::before {
+    font-size: 11px;
+  }
+  /* Action buttons row */
+  .data-table .row-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: stretch;
+    gap: 8px;
+    padding-top: 12px;
+    margin-top: 4px;
+    border-top: 1px solid var(--border);
+    width: 100%;
+  }
+  .data-table .row-actions[data-label]::before {
+    display: none; /* Hide Actions label to give full width to buttons */
+  }
+  .data-table .row-actions .btn {
+    flex: 1;
+    min-height: 38px;
+    padding: 8px 12px;
+    font-size: 13px;
+    justify-content: center;
   }
 
   .pagination {

@@ -87,12 +87,12 @@ function paintClasses(rows) {
     .map(
       (c) => `
     <tr>
-      <td>${escapeHtml(c.class_name)}</td>
-      <td>${escapeHtml(c.fee_type)}</td>
-      <td class="num tabular">${formatCurrency(c.fee_amount)}</td>
-      <td>${escapeHtml(c.academic_year)}</td>
-      <td><span class="badge ${c.active ? "badge--active" : "badge--inactive"}">${c.active ? "Active" : "Inactive"}</span></td>
-      <td class="row-actions">
+      <td data-label="Class Name">${escapeHtml(c.class_name)}</td>
+      <td data-label="Fee Type">${escapeHtml(c.fee_type)}</td>
+      <td class="num tabular" data-label="Fee Amount">${formatCurrency(c.fee_amount)}</td>
+      <td data-label="Academic Year">${escapeHtml(c.academic_year)}</td>
+      <td data-label="Status"><span class="badge ${c.active ? "badge--active" : "badge--inactive"}">${c.active ? "Active" : "Inactive"}</span></td>
+      <td class="row-actions" data-label="Actions">
         <button class="btn btn--ghost btn--sm" data-edit="${c.id}">Edit</button>
         <button class="btn btn--danger btn--sm" data-delete="${c.id}">Delete</button>
       </td>
