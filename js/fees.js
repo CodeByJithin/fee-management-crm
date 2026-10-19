@@ -204,6 +204,11 @@ function acknowledgeFee(f) {
   const feeAmount = Number(f.fee_amount || 0);
   const paidAmount = Number(f.amount_paid || 0);
 
+  if (paidAmount <= 0) {
+    toast("Fees not paid. Cannot acknowledge payment.", "error");
+    return;
+  }
+
   const message = `Hi ${parentName},
 
 This is to acknowledge the fee payment for ${studentName} (${studentId}) for ${feeMonth}.
@@ -234,6 +239,13 @@ Team ${institution}`;
 
 function followUpFee(f) {
   if (!f) return;
+
+  const balanceAmount = Number(f.balance_amount || 0);
+
+  if (balanceAmount == 0) {
+    toast("fees already paid. Cannot send reminder for this fee.", "error");
+    return;
+  }
 
   const studentName = f.students?.student_name || "your child";
   const studentId = f.students?.student_id || "your child id";
