@@ -191,7 +191,46 @@ async function deleteFeeRecord(f) {
   }
 }
 
+function acknowledgeFee(f) {
+  if (!f) return;
 
+  const studentName = f.students?.student_name || "your child";
+  const studentId = f.students?.student_id || "your child id";
+  const parentName = f.students?.parent_name || "Parent";
+  const parentPhone = f.students?.parent_phone || "";
+  const institution = "Edviora Academy";
+
+  const feeMonth = f.month || "this month";
+  const feeAmount = Number(f.fee_amount || 0);
+  const paidAmount = Number(f.amount_paid || 0);
+
+  const message = `Hi ${parentName},
+
+This is to acknowledge the fee payment for ${studentName} (${studentId}) for ${feeMonth}.
+
+Fee Amount: ${formatCurrency(feeAmount)}
+Amount Paid: ${formatCurrency(paidAmount)}
+Balance Due: ${formatCurrency(f.balance_amount || 0)}
+
+Thank you for your payment and for choosing ${institution}. We appreciate your continued trust and support.
+
+Thanks,
+Team ${institution}`;
+
+  // Remove spaces and special characters from phone number
+  const phone = parentPhone.replace(/\D/g, "");
+
+  if (!phone) {
+    alert("Parent phone number is missing.");
+    return;
+  }
+
+  // Open WhatsApp with pre-filled acknowledgement
+  const whatsappUrl =
+    `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+  window.open(whatsappUrl, "_blank");
+}
 
 function followUpFee(f) {
   if (!f) return;
@@ -389,6 +428,13 @@ function viewFeeDetails(f) {
       <button 
         type="button" 
         class="btn btn--ghost"
+        id="acknowledgeBtn-${f.id}">
+        Acknowledge
+      </button>
+
+      <button 
+        type="button" 
+        class="btn btn--ghost"
         id="followUpBtn-${f.id}">
         Follow Up
       </button>
@@ -404,9 +450,11 @@ function viewFeeDetails(f) {
 
   const saveBtn = overlay.querySelector(`#saveFollowUpBtn-${f.id}`);
   const followUpBtn = overlay.querySelector(`#followUpBtn-${f.id}`);
+  const acknowledgeBtn = overlay.querySelector(`#acknowledgeBtn-${f.id}`);
 
   saveBtn?.addEventListener("click", () => saveFollowUpFee(f.id, saveBtn));
   followUpBtn?.addEventListener("click", () => followUpFee(f));
+  acknowledgeBtn?.addEventListener("click", () => acknowledgeFee(f));
 }
 
 
