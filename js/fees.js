@@ -192,37 +192,62 @@ async function deleteFeeRecord(f) {
 }
 
 
+
 function followUpFee(f) {
   if (!f) return;
 
   const studentName = f.students?.student_name || "your child";
+  const studentId = f.students?.student_id || "your child id";
   const parentName = f.students?.parent_name || "Parent";
   const parentPhone = f.students?.parent_phone || "";
+  const institution = "Edviora Academy";
+  const upiid = "9746925420@ybl";
+
+  // Generate a dynamic UPI payment link
+  const amount = Number(f.balance_amount || 0);
+  const feeMonth = f.month || "this month";
+  const paymentNote = `${feeMonth} Fees - ${studentName} (${studentId})`;
+
+  const paymentLink =
+    `upi://pay?pa=${encodeURIComponent(upiid)}` +
+    `&am=${encodeURIComponent(amount.toFixed(2))}` +
+    `&tn=${encodeURIComponent(paymentNote)}` +
+    `&cu=INR`;
+
   const message = `Hi ${parentName},
 
-This is Anjel from Eduvoia.
-
-This is a gentle reminder that the payment for ${studentName} for ${f.month || "this month"} is currently pending.
+This is a gentle reminder that the payment for ${studentName} for ${feeMonth} is currently pending.
 
 Fee Amount: ${formatCurrency(f.fee_amount)}
 Balance Due: ${formatCurrency(f.balance_amount)}
 
-Kindly request you to clear the outstanding amount at the earliest.
+Pay securely using the UPI link below:
+${paymentLink}
+
+Please open the link on your mobile device and select your preferred UPI app, such as Google Pay or PhonePe, to complete the payment.
+
+Kindly clear the outstanding amount at the earliest.
 
 Thank you for your prompt attention.
 
 Thanks,
-Team Eduvoia`;
+Team ${institution}`;
 
   // Remove spaces and special characters from phone number
   const phone = parentPhone.replace(/\D/g, "");
 
+  if (!phone) {
+    alert("Parent phone number is missing.");
+    return;
+  }
 
   // Open WhatsApp with pre-filled message
-  const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  const whatsappUrl =
+    `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
   window.open(whatsappUrl, "_blank");
 }
+
 
 
 async function saveFollowUpFee(feeId, btnEl) {
